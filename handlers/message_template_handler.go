@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/mukezhz/logging-template/dtos"
+	"github.com/mukezhz/logging-template/models"
 	"github.com/mukezhz/logging-template/repos"
 	"github.com/mukezhz/logging-template/utils"
 )
@@ -19,12 +20,23 @@ func ToastHandler(repo *repos.TemplateRepo) http.HandlerFunc {
 			return
 		}
 
+		runtimeVars := map[string]any{
+			"orderId": "ORD-101",
+			"limit":   5,
+		}
+
+		finalVars, err := models.ResolveVariables(
+			tpl.Variables,
+			runtimeVars,
+		)
+		if err != nil {
+			http.Error(w, err.Error(), 400)
+			return
+		}
+
 		message := utils.RenderTemplate(
 			tpl.Template,
-			map[string]any{
-				"orderId": "ORD-123",
-				"limit":   5,
-			},
+			finalVars,
 		)
 
 		resp := dtos.ToastResponse{

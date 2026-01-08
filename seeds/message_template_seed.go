@@ -6,25 +6,29 @@ import (
 )
 
 func Seed(db *gorm.DB) {
-	data := []models.MessageTemplate{
+	templates := []models.MessageTemplate{
 		{
 			TenantID:  "tenant_a",
 			Code:      "ORDER_LIMIT_EXCEEDED",
 			Template:  "Order {orderId} exceeded limit {limit}",
 			ToastType: "error",
-		},
-		{
-			TenantID:  "tenant_b",
-			Code:      "ORDER_LIMIT_EXCEEDED",
-			Template:  "You cannot place more than {limit} orders",
-			ToastType: "warning",
+			Variables: []models.MessageTemplateVariable{
+				{
+					VariableKey: "orderId",
+					Required:    true,
+				},
+				{
+					VariableKey: "limit",
+					Required:    true,
+				},
+			},
 		},
 	}
 
-	for _, d := range data {
-		db.FirstOrCreate(&d, models.MessageTemplate{
-			TenantID: d.TenantID,
-			Code:     d.Code,
+	for _, t := range templates {
+		db.FirstOrCreate(&t, models.MessageTemplate{
+			TenantID: t.TenantID,
+			Code:     t.Code,
 		})
 	}
 }

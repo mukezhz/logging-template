@@ -18,7 +18,10 @@ func InitDB() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&models.MessageTemplate{})
+	db.AutoMigrate(
+		&models.MessageTemplate{},
+		&models.MessageTemplateVariable{},
+	)
 	return db
 }
 

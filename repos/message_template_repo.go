@@ -17,11 +17,13 @@ func (r *TemplateRepo) Get(
 	tenantID, code string,
 ) (*models.MessageTemplate, error) {
 
-	var t models.MessageTemplate
+	var tpl models.MessageTemplate
+
 	err := r.db.
+		Preload("Variables").
 		Where("tenant_id = ? AND code = ? AND enabled = true",
 			tenantID, code).
-		First(&t).Error
+		First(&tpl).Error
 
-	return &t, err
+	return &tpl, err
 }
